@@ -3,15 +3,20 @@
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <!-- <HelloWorld msg="Welcome to Your Vue.js App"/> -->
     <div>
-      <b-form-group label="Bom表(Excel):" label-cols-sm="1" label-size="sm">
-        <b-form-file
+      <b-container>
+        <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
+          <!-- <b-form-file
           id="file-small"
           size="sm"
           v-model="file"
           :state="Boolean(file)"
-        ></b-form-file>
-        <b-button @click="test"> 上傳 </b-button>
-      </b-form-group>
+        ></b-form-file> -->
+          <b-form-file v-model="file" ref="file-input" class="mb-2">
+
+          </b-form-file>
+          <b-button class="mr-2" @click="test"> 上傳 </b-button>
+        </b-form-group>
+      </b-container>
     </div>
   </div>
 </template>
@@ -47,13 +52,9 @@ export default {
       let formData = new FormData();
       formData.append("file", this.file);
       axios
-        .post(
-          "http://localhost:5001/api/Bom/CreateBom",
-          formData,
-          {
-            Headers: { "Content-Type": "multipart/form-data" }
-          }
-        )
+        .post("http://localhost:5001/api/Bom/CreateBom", formData, {
+          Headers: { "Content-Type": "multipart/form-data" },
+        })
         .then(function () {
           this.file = this.$refs.file.files[0];
         })
