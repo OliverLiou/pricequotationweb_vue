@@ -1,3 +1,4 @@
+
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
@@ -5,23 +6,24 @@
     <div>
       <b-container>
         <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
-          <!-- <b-form-file
-          id="file-small"
-          size="sm"
-          v-model="file"
-          :state="Boolean(file)"
-        ></b-form-file> -->
-          <b-form-file v-model="file" ref="file-input" class="mb-2">
-
-          </b-form-file>
-          <b-button class="mr-2" @click="test"> 上傳 </b-button>
+          <b-form-file
+            v-model="file"
+            ref="file-input"
+            class="mb-2"
+          ></b-form-file>
+          <b-button class="mr-2" @click="UploadBom">上傳</b-button>
         </b-form-group>
       </b-container>
+    </div>
+
+    <div>
+      <b-table striped hover :Boms="Boms"></b-table>
     </div>
   </div>
 </template>
 
 <script>
+/* eslint-disable no-unused-vars */
 // import HelloWorld from './components/HelloWorld.vue'
 import Vue from "vue";
 import { BootstrapVue, IconsPlugin } from "bootstrap-vue";
@@ -41,14 +43,27 @@ export default {
   name: "App",
   data() {
     return {
-      file: "",
+      file: null,
+      Boms: [],
     };
+  },
+  async mounted() {
+    const self = this
+     await axios
+      .get("http://localhost:5001/api/Bom/GetBoms")
+     
+      .then(function (params) {
+        self.Boms = params.data
+      })
+      .catch(function (error) {
+        alert(error.response.data.Error.join("\n"));
+      });
   },
   components: {
     // HelloWorld
   },
   methods: {
-    test() {
+    UploadBom() {
       let formData = new FormData();
       formData.append("file", this.file);
       axios
@@ -59,7 +74,7 @@ export default {
           this.file = this.$refs.file.files[0];
         })
         .catch(function (error) {
-          alert(error);
+          alert(error.response.data.Error.join("\n"));
         });
     },
   },
