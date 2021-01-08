@@ -7,6 +7,7 @@
       <b-container>
         <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
           <b-form-file
+            accept=".xslx"
             v-model="file"
             ref="file-input"
             class="mb-2"
@@ -48,12 +49,12 @@ export default {
     };
   },
   async mounted() {
-    const self = this
-     await axios
+    const self = this;
+    await axios
       .get("http://localhost:5001/api/Bom/GetBoms")
-     
       .then(function (params) {
-        self.Boms = params.data
+        console.log(params.data[0])
+        self.Boms = params.data[0]
       })
       .catch(function (error) {
         alert(error.response.data.Error.join("\n"));
@@ -64,6 +65,10 @@ export default {
   },
   methods: {
     UploadBom() {
+      if (this.file == null) {
+        alert('請選擇檔案後再上傳！')
+        return;
+      }
       let formData = new FormData();
       formData.append("file", this.file);
       axios
