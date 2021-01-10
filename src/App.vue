@@ -18,7 +18,7 @@
     </div>
 
     <div>
-      <b-table striped hover :Boms="Boms"></b-table>
+      <b-table :items="Boms" :fields="Column" striped hover></b-table>
     </div>
   </div>
 </template>
@@ -46,6 +46,59 @@ export default {
     return {
       file: null,
       Boms: [],
+      Column: [
+        {
+          key: "assemblyPartNumber",
+          sortable: true,
+          label: "總成件號",
+        },
+        {
+          key: "assemblyName",
+          sortable: true,
+          label: "總成件名",
+        },
+        {
+          key: "assemblyNameEng",
+          sortable: true,
+          label: "總成件名(英)",
+        },
+        {
+          key: "customer",
+          sortable: true,
+          label: "顧客",
+        },
+        {
+          key: "model",
+          sortable: true,
+          label: "車型",
+        },
+        {
+          key: "allFinishTime",
+          sortable: true,
+          label: "報價完成時間(預計)",
+          formatter: "yyyy/MM/dd"
+        },
+        {
+          key: "assemblyRemark",
+          sortable: true,
+          label: "總成備註",
+        },
+        {
+          key: "createDate",
+          sortable: true,
+          label: "創立時間",
+        },
+        {
+          key: "modifyDate",
+          sortable: true,
+          label: "最後編輯時間",
+        },
+        {
+          key: "status",
+          sortable: true,
+          label: "狀態",
+        },
+      ],
     };
   },
   async mounted() {
@@ -53,8 +106,8 @@ export default {
     await axios
       .get("http://localhost:5001/api/Bom/GetBoms")
       .then(function (params) {
-        console.log(params.data[0])
-        self.Boms = params.data[0]
+        // console.log(params.data[0]);
+        self.Boms = params.data;
       })
       .catch(function (error) {
         alert(error.response.data.Error.join("\n"));
@@ -66,7 +119,7 @@ export default {
   methods: {
     UploadBom() {
       if (this.file == null) {
-        alert('請選擇檔案後再上傳！')
+        alert("請選擇檔案後再上傳！");
         return;
       }
       let formData = new FormData();
