@@ -7,7 +7,7 @@
       <b-container>
         <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
           <b-form-file
-            accept=".xlsx"
+            accept=".xslx"
             v-model="file"
             ref="file-input"
             class="mb-2"
@@ -45,32 +45,32 @@ export default {
   data() {
     return {
       file: null,
-      Boms: null,
+      Boms: [],
     };
   },
-  // async mounted() {
-  //   const self = this
-  //    await axios
-  //     .get("http://localhost:5001/api/Bom/GetBoms")
-
-  //     .then(function (params) {
-  //       self.Boms = params.data
-  //     })
-  //     .catch(function (error) {
-  //       alert(error.response.data.Error.join("\n"));
-  //     });
-  // },
+  async mounted() {
+    const self = this;
+    await axios
+      .get("http://localhost:5001/api/Bom/GetBoms")
+      .then(function (params) {
+        console.log(params.data[0])
+        self.Boms = params.data[0]
+      })
+      .catch(function (error) {
+        alert(error.response.data.Error.join("\n"));
+      });
+  },
   components: {
     // HelloWorld
   },
   methods: {
     UploadBom() {
       if (this.file == null) {
-        alert("請選擇檔案後再上傳！");
+        alert('請選擇檔案後再上傳！')
         return;
       }
-       let formData = new FormData();
-        formData.append("file", this.file);
+      let formData = new FormData();
+      formData.append("file", this.file);
       axios
         .post("http://localhost:5001/api/Bom/CreateBom", formData, {
           Headers: { "Content-Type": "multipart/form-data" },
