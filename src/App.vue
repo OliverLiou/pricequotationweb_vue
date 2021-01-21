@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/no-unused-vars -->
 
 <template>
   <div id="app">
@@ -18,7 +19,16 @@
     </div>
 
     <div>
-      <b-table :items="Boms" :fields="Column" striped hover></b-table>
+      <b-table :items="Boms" :fields="Column" >
+        <template #cell(index)="data">
+        {{ data.index + 1 }}
+        </template>
+
+        <template #cell(action)="row">
+            <b-button variant="outline-primary" size="sm" class="mr-1">詳細資料</b-button>
+        </template>
+
+      </b-table>
     </div>
   </div>
 </template>
@@ -39,6 +49,7 @@ Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
 
 import axios from "axios";
+import moment from "moment";
 
 export default {
   name: "App",
@@ -47,10 +58,11 @@ export default {
       file: null,
       Boms: [],
       Column: [
+        'index',
         {
           key: "assemblyPartNumber",
           sortable: true,
-          label: "總成件號",
+          label: "總成件號"
         },
         {
           key: "assemblyName",
@@ -76,7 +88,7 @@ export default {
           key: "allFinishTime",
           sortable: true,
           label: "報價完成時間(預計)",
-          formatter: "yyyy/MM/dd"
+          formatter: 'DateTimeFormat'
         },
         {
           key: "assemblyRemark",
@@ -87,36 +99,46 @@ export default {
           key: "createDate",
           sortable: true,
           label: "創立時間",
+          formatter: 'DateTimeFormat'
         },
         {
           key: "modifyDate",
           sortable: true,
           label: "最後編輯時間",
+          formatter: 'DateTimeFormat'
         },
         {
           key: "status",
           sortable: true,
           label: "狀態",
         },
+        // {
+        //   label: "操作",
+        //   // value: <b-button>測試</b-button>
+        // }
+        'action'
       ],
     };
   },
   async mounted() {
-    const self = this;
-    await axios
-      .get("http://localhost:5001/api/Bom/GetBoms")
-      .then(function (params) {
-        // console.log(params.data[0]);
-        self.Boms = params.data;
-      })
-      .catch(function (error) {
-        alert(error.response.data.Error.join("\n"));
-      });
+    this.GetBoms();
   },
   components: {
     // HelloWorld
   },
   methods: {
+    async GetBoms() {
+      const self = this;
+    await axios
+      .get("http://localhost:5001/api/Bom/GetBoms")
+      .then(function (params) {
+        // console.log(params.data);
+        self.Boms = params.data;
+      })
+      .catch(function (error) {
+        alert(error.response.data.Error.join("\n"));
+      });
+    },
     UploadBom() {
       if (this.file == null) {
         alert("請選擇檔案後再上傳！");
@@ -130,12 +152,18 @@ export default {
         })
         .then(function () {
           this.file = this.$refs.file.files[0];
+          alert('上傳成功！')
+          
         })
         .catch(function (error) {
           alert(error.response.data.Error.join("\n"));
         });
     },
-  },
+    DateTimeFormat(date) {
+      if(date !=null)
+        return moment(date).format('YYYY-MM-DD')
+    }
+  }
 };
 </script>
 
