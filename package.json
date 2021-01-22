@@ -15,6 +15,7 @@
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "vue": "^2.6.12",
+    "vue-router": "^3.4.9",
     "vue-upload-component": "^2.8.22"
   },
   "devDependencies": {
