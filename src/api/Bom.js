@@ -14,8 +14,8 @@ const GetBoms = {
 }
 
 const GetBomDetail = {
-    r: (params) => {
-        return instance.post(`${preUrlPath}/GetBomDetail`, params)
+    r: (query) => {
+        return instance.get(`${preUrlPath}/GetBomDetail/${query}`)
     }
 }
 

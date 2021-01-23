@@ -146,7 +146,7 @@ export default {
     },
     GetBomDetails(assemblyPartNumber) {
       const { href } = this.$router.resolve({
-        name: "GetBomDetails",
+        name: "GetBomDetail",
         params: { assemblyPartNumber: assemblyPartNumber },
       });
       window.open(href, "_blank", "toolbar=yes, width=1300, height=900");

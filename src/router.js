@@ -15,8 +15,8 @@ export default new VueRouter({
             component: Home
         },
         {
-            path: '/GetBomDetails/:assemblyPartNumber',
-            name: 'GetBomDetails',
+            path: '/GetBomDetail/:assemblyPartNumber',
+            name: 'GetBomDetail',
             component: BomDetails
         }
 
