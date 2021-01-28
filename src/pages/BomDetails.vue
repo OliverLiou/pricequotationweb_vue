@@ -3,18 +3,18 @@
     <b-tabs content-class="mt-3">
       <b-tab title="【Bom續頁】">
         <p>I'm the first tab</p>
-        <b-table :items="BomDetail" :fields="BomItemColumn">
+        <b-table :items="BomDetail" :fields="BomItemColumn" sort-by="no">
         </b-table>
       </b-tab>
 
       <b-tab title="【量/檢具】">
         <p>I'm the second tab</p>
-        <b-table :items="MeasuringDetail" :fields="MeasuringItemColumn">
+        <b-table :items="MeasuringDetail" :fields="MeasuringItemColumn" sort-by="no" >
         </b-table>
       </b-tab>
       <b-tab title="【夾/治具及設備】">
         <p>I'm a disabled tab!</p>
-        <b-table :items="FixtureDetail" :fields="FixtureItemColumn">
+        <b-table :items="FixtureDetail" :fields="FixtureItemColumn" sort-by="no">
         </b-table>
       </b-tab>
     </b-tabs>
@@ -27,6 +27,7 @@ export default {
   name: "app",
   data() {
     return {
+      OrderBy: 'no',
       BomDetail: null,
       BomItemColumn: [
         {
