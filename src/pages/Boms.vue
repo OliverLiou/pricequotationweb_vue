@@ -5,7 +5,7 @@
       <b-container>
         <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
           <b-form-file
-            accept=".xslx"
+            accept=".xlsx"
             v-model="file"
             ref="file-input"
             class="mb-2"
@@ -21,27 +21,34 @@
           {{ data.index + 1 }}
         </template>
 
-        <template #cell(action)="row">
+        <template #cell(action)="row"> <!-- # = v-slot縮寫 -->
           <b-button
             variant="outline-primary"
             size="sm"
             class="mr-1"
-            @click="GetBomDetails('Test-53510-BZ100')"
+            @click="GetBomDetails(row.item.assemblyPartNumber)"
           >
             詳細資料
           </b-button>
         </template>
       </b-table>
     </div>
+    <template>
+      <b-button class="mr-2" @click="showModal=true" >Show</b-button>
+      <modal v-if="showModal" @close="showModal = false" name="TEST">
+        This is my first modal
+        This is my first modal
+        This is my first modal
+        This is my first modal
+        This is my first modal
+      </modal>
+    </template>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
-import axios from "axios";
-import moment from "moment";
 import BomDetail from "../pages/BomDetails";
-import * as api from "../api/Bom";
 
 export default {
   name: "App",
@@ -106,16 +113,17 @@ export default {
         },
         "action",
       ],
+      showModal: false
     };
   },
   async mounted() {
     this.GetBoms();
   },
-  components: {},
+  components: { },
   methods: {
     async GetBoms() {
       const self = this;
-      await api.GetBoms.r()
+      await this.$BomApi.GetBoms.r()
         .then((res) => {
           self.Boms = res.data;
         })
@@ -130,7 +138,7 @@ export default {
       }
       let formData = new FormData();
       formData.append("file", this.file);
-      api.CreateBom.r(formData, {
+      this.$BomApi.CreateBom.r(formData, {
         Headers: { "Content-Type": "multipart/form-data" },
       })
         .then(function () {
@@ -142,7 +150,9 @@ export default {
         });
     },
     DateTimeFormat(date) {
-      if (date != null) return moment(date).format("YYYY-MM-DD");
+      if (date != null) {
+        return this.$moment(date).format('YYYY-MM-DD');
+      }
     },
     GetBomDetails(assemblyPartNumber) {
       const { href } = this.$router.resolve({
@@ -150,7 +160,7 @@ export default {
         params: { assemblyPartNumber: assemblyPartNumber },
       });
       window.open(href, "_blank", "toolbar=yes, width=1300, height=900");
-    },
+    }
   },
 };
 </script>
