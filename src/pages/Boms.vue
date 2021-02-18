@@ -21,12 +21,13 @@
           {{ data.index + 1 }}
         </template>
 
-        <template #cell(action)="row"> <!-- # = v-slot縮寫 -->
+        <template #cell(action)="row">
+          <!-- # = v-slot縮寫 -->
           <b-button
             variant="outline-primary"
             size="sm"
             class="mr-1"
-            @click="GetBomDetails(row.item.assemblyPartNumber)"
+            @click="ControlModal(row.item)"
           >
             詳細資料
           </b-button>
@@ -34,23 +35,23 @@
       </b-table>
     </div>
     <template>
-      <b-button class="mr-2" @click="showModal=true" >Show</b-button>
-      <modal v-if="showModal" @close="showModal = false" name="TEST">
-        This is my first modal
-        This is my first modal
-        This is my first modal
-        This is my first modal
-        This is my first modal
-      </modal>
+      <b-modal v-model="modalParms.show" :title="modalParms.title">
+        <BomDetail
+          :id="modalParms.assemblyPartNumber"
+          :show="modalParms.show"
+        />
+      </b-modal>
     </template>
   </div>
 </template>
 
 <script>
 /* eslint-disable no-unused-vars */
-import BomDetail from "../pages/BomDetails";
+// import BomDetail from '../pages/BomDetails';
+import BomDetail from "./BomDetails";
 
 export default {
+  components: { BomDetail },
   name: "App",
   data() {
     return {
@@ -113,13 +114,16 @@ export default {
         },
         "action",
       ],
-      showModal: false
+      modalParms: {
+        show: false,
+        assemblyPartNumber: null,
+        title: null,
+      },
     };
   },
   async mounted() {
     this.GetBoms();
   },
-  components: { },
   methods: {
     async GetBoms() {
       const self = this;
@@ -151,16 +155,21 @@ export default {
     },
     DateTimeFormat(date) {
       if (date != null) {
-        return this.$moment(date).format('YYYY-MM-DD');
+        return this.$moment(date).format("YYYY-MM-DD");
       }
     },
-    GetBomDetails(assemblyPartNumber) {
-      const { href } = this.$router.resolve({
-        name: "GetBomDetail",
-        params: { assemblyPartNumber: assemblyPartNumber },
-      });
-      window.open(href, "_blank", "toolbar=yes, width=1300, height=900");
-    }
+    // GetBomDetails(assemblyPartNumber) {
+    //   const { href } = this.$router.resolve({
+    //     name: "GetBomDetail",
+    //     params: { assemblyPartNumber: assemblyPartNumber },
+    //   });
+    //   window.open(href, "_blank", "toolbar=yes, width=1300, height=900");
+    // },
+    ControlModal(rowData) {
+      this.modalParms.show = true;
+      this.modalParms.title = rowData.assemblyPartNumber + "詳細資料";
+      this.modalParms.assemblyPartNumber = rowData.assemblyPartNumber;
+    },
   },
 };
 </script>
@@ -173,5 +182,21 @@ export default {
   text-align: center;
   color: #2c3e50;
   margin-top: 60px;
+}
+.modal-dialog {
+  min-width: 95%;
+  /* min-height: 50%; */
+  height: 100px;
+  overflow-x: initial !important;
+}
+/* .modal-content {
+  background-color: #2c3e50;
+  overflow-x: auto;
+} */
+.modal-header {
+  background-color: #337ab7;
+  padding: 16px 16px;
+  color: #fff;
+  border-bottom: 2px dashed #337ab7;
 }
 </style>
