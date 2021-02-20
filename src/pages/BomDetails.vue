@@ -4,6 +4,9 @@
     <b-tabs content-class="mt-3">
       <div>
         <b-tab title="【Bom續頁】">
+          <!-- table-responsive text-nowrap 
+          If you want use a .text-nowrap you have to use div wrapper with 
+          .table-responsive class because your table will be broken on small on small screens. -->
           <b-table
             class="table-responsive text-nowrap text-center"
             responsive
@@ -11,17 +14,26 @@
             :fields="BomItemColumn"
             sort-by="no"
           >
-            <!-- table-responsive text-nowrap 
-          If you want use a .text-nowrap you have to use div wrapper with 
-          .table-responsive class because your table will be broken on small on small screens. -->
-            <template #cell(action)="row">
+            <template v-slot:cell(actions)="{ item }">
+              <b-button-group
+                v-if="BomCurrentRow && BomCurrentRow.no === item.no"
+              >
+                <b-btn variant="success" @click="SaveBomRow"> Save </b-btn>
+                <b-btn variant="danger" @click="ResetEdit"> Cancel </b-btn>
+              </b-button-group>
+              <b-btn v-else variant="primary" @click="EditBomRow(item)">
+                Edit
+              </b-btn>
+            </template>
+
+            <!-- <template #cell(action)="row">
               <b-button 
               variant="outline-primary"
               size="sm" class="mr-2"
               >
                 編輯
               </b-button>
-            </template>
+            </template> -->
           </b-table>
         </b-tab>
 
@@ -52,6 +64,14 @@
 import * as api from "../api/Bom";
 export default {
   name: "BomDetails",
+  computed: {
+    editableFields() {
+      return this.BomItemColumn.filter((field) => {
+        console.log(field);
+        return field.editable === true;
+      });
+    },
+  },
   props: {
     title: { type: String, default: null },
     id: { type: String, default: null },
@@ -61,6 +81,7 @@ export default {
     return {
       OrderBy: "no",
       BomDetail: null,
+      BomCurrentRow: null,
       BomItemColumn: [
         {
           key: "no",
@@ -77,11 +98,13 @@ export default {
           label: "件號",
           sortable: true,
           stickyColumn: true,
+          editable: true,
         },
         {
           key: "partName",
           label: "件名",
           sortable: true,
+          editable: true,
         },
         {
           key: "partName_Eng",
@@ -168,7 +191,11 @@ export default {
           label: "備註",
           sortable: true,
         },
-        "action",
+        {
+          key: "actions",
+          class: "text-center",
+        },
+        // 'actions',
       ],
       MeasuringDetail: null,
       MeasuringItemColumn: [
@@ -294,6 +321,26 @@ export default {
           alert(error.response.data.Error.join("\n"));
         });
     },
+    EditBomRow(row) {
+      let doEdit = true;
+      if ( this.BomCurrentRow &&
+          !confirm("尚有資料未儲存，是否要繼續?")
+      ) {
+        doEdit = false;
+      }
+      if (doEdit) {
+        this.BomCurrentRow = { ...row };
+      }
+    },
+    ResetEdit() {
+      this.BomCurrentRow = null;
+    },
+    // eslint-disable-next-line no-unused-vars
+    SaveBomRow(row) {
+      //執行api
+
+      this.ResetEdit();
+    }
   },
 };
 </script>
