@@ -14,26 +14,75 @@
             :fields="BomItemColumn"
             sort-by="no"
           >
+            <template v-slot:cell()="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-input v-else v-model="item[field.key]" />
+            </template>
+
+            <template v-slot:cell(partLevel)="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-select
+                v-else
+                v-model="item[field.key]"
+                :options="partLevelOptions"
+              />
+            </template>
+
+            <template v-slot:cell(neworOld)="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-select
+                v-else
+                v-model="item[field.key]"
+                :options="newOldOptions"
+                @change="newOldChange(item)"
+              />
+            </template>
+
+            <template v-slot:cell(oldCarType)="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-input v-if="(edit == item.no && field.editable == true) && item.neworOld == 'Old'"
+                v-model="item[field.key]"
+              />
+            </template>
+
+             <template v-slot:cell(source)="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-select v-if="edit == item.no && field.editable == true"
+                v-model="item[field.key]" :options="sourceOptions"
+              />
+            </template>
+
+            <template v-slot:cell(quantity)="{ value, item, field }">
+              <template v-if="edit != item.no || field.editable == false">
+                {{ value }}
+              </template>
+              <b-form-input v-if="edit == item.no && field.editable == true"
+                v-model="item[field.key]" type="number" />
+            </template>
+
             <template v-slot:cell(actions)="{ item }">
               <b-button-group
                 v-if="BomCurrentRow && BomCurrentRow.no === item.no"
               >
-                <b-btn variant="success" @click="SaveBomRow"> Save </b-btn>
-                <b-btn variant="danger" @click="ResetEdit"> Cancel </b-btn>
+                <b-btn variant="success" @click="SaveBomRow(item)">
+                  儲存
+                </b-btn>
+                <b-btn variant="danger" @click="ResetEdit"> 取消 </b-btn>
               </b-button-group>
               <b-btn v-else variant="primary" @click="EditBomRow(item)">
-                Edit
+                編輯
               </b-btn>
             </template>
-
-            <!-- <template #cell(action)="row">
-              <b-button 
-              variant="outline-primary"
-              size="sm" class="mr-2"
-              >
-                編輯
-              </b-button>
-            </template> -->
           </b-table>
         </b-tab>
 
@@ -64,14 +113,7 @@
 import * as api from "../api/Bom";
 export default {
   name: "BomDetails",
-  computed: {
-    editableFields() {
-      return this.BomItemColumn.filter((field) => {
-        console.log(field);
-        return field.editable === true;
-      });
-    },
-  },
+  computed: {},
   props: {
     title: { type: String, default: null },
     id: { type: String, default: null },
@@ -80,6 +122,7 @@ export default {
   data() {
     return {
       OrderBy: "no",
+      edit: null,
       BomDetail: null,
       BomCurrentRow: null,
       BomItemColumn: [
@@ -87,11 +130,13 @@ export default {
           key: "no",
           label: "編號",
           sortable: true,
+          editable: false,
         },
         {
           key: "partLevel",
           label: "構成關係",
           sortable: true,
+          editable: true,
         },
         {
           key: "partNumber",
@@ -110,93 +155,126 @@ export default {
           key: "partName_Eng",
           label: "件名(英文)",
           sortable: true,
+          editable: true,
         },
         {
           key: "material",
           label: "Bom表材質",
           sortable: true,
+          editable: true,
         },
         {
           key: "thicknessWire",
           label: "線徑與板厚",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingNo1",
           label: "途程代號(1)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingRule1",
           label: "途程規範(1)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingNo2",
           label: "途程代號(2)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingRule2",
           label: "途程規範(2)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingNo3",
           label: "途程代號(3)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingRule3",
           label: "途程規範(3)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingNo4",
           label: "途程代號(4)",
           sortable: true,
+          editable: true,
         },
         {
           key: "routingRule4",
           label: "途程規範(4)",
           sortable: true,
+          editable: true,
         },
         {
           key: "neworOld",
           label: "新件/延用件",
           sortable: true,
+          editable: true,
         },
         {
           key: "oldCarType",
           label: "延用車型",
           sortable: true,
+          editable: true,
         },
         {
           key: "source",
           label: "來源",
           sortable: true,
+          editable: true,
         },
         {
           key: "quantity",
           label: "數量",
           sortable: true,
+          editable: true,
         },
         {
           key: "category",
           label: "類別",
           sortable: true,
+          editable: true,
         },
         {
           key: "remark",
           label: "備註",
           sortable: true,
+          editable: true,
         },
         {
           key: "actions",
-          class: "text-center",
         },
         // 'actions',
       ],
+      partLevelOptions: [
+        { value: 0, text: 0 },
+        { value: 1, text: 1 },
+        { value: 2, text: 2 },
+        { value: 3, text: 3 },
+        { value: 4, text: 4 },
+        { value: 5, text: 5 },
+        { value: 6, text: 6 },
+        { value: 7, text: 7 },
+        { value: 8, text: 8 },
+        { value: 9, text: 9 },
+      ],
+      newOldOptions: [
+        { value: "New", text: "New" },
+        { value: "Old", text: "Old" },
+      ],
+      sourceOptions: null,
       MeasuringDetail: null,
       MeasuringItemColumn: [
         {
@@ -322,25 +400,39 @@ export default {
         });
     },
     EditBomRow(row) {
+      this.edit = this.edit !== row.no ? row.no : null;
       let doEdit = true;
-      if ( this.BomCurrentRow &&
-          !confirm("尚有資料未儲存，是否要繼續?")
-      ) {
+      if (this.BomCurrentRow && !confirm("尚有資料未儲存，是否要繼續?")) {
         doEdit = false;
       }
       if (doEdit) {
         this.BomCurrentRow = { ...row };
+        this.newOldChange(row)
       }
     },
     ResetEdit() {
+      this.edit = null;
       this.BomCurrentRow = null;
     },
-    // eslint-disable-next-line no-unused-vars
     SaveBomRow(row) {
       //執行api
-
+      console.log(row);
       this.ResetEdit();
-    }
+    },
+    newOldChange(item) {
+      if (item.neworOld == "New") {
+        item.oldCarType = null
+        this.sourceOptions = [
+          { value: "進口件", text: "進口件" },
+          { value: "支給件", text: "支給件" },
+          { value: "自製件", text: "自製件" },
+          { value: "外包件", text: "外包件" },
+        ];
+      } else if (item.neworOld == "Old") {
+        this.sourceOptions = [{ value: "延用件", text: "延用件" }];
+      }
+    },
   },
 };
 </script>
+
