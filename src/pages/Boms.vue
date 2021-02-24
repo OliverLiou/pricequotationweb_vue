@@ -185,14 +185,13 @@ export default {
 }
 .modal-dialog {
   min-width: 95%;
-  /* min-height: 50%; */
   height: 100px;
-  overflow-x: initial !important;
+  /* overflow-x: initial !important; */
 }
-/* .modal-content {
+.modal-content {
   background-color: #2c3e50;
-  overflow-x: auto;
-} */
+  /* overflow-x: auto; */
+}
 .modal-header {
   background-color: #337ab7;
   padding: 16px 16px;

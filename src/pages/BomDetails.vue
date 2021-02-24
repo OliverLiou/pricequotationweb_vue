@@ -1,17 +1,19 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
   <div id="BomDetails">
-    <b-tabs content-class="mt-3">
+    <b-tabs>
       <div>
         <b-tab title="【Bom續頁】">
           <!-- table-responsive text-nowrap 
           If you want use a .text-nowrap you have to use div wrapper with 
           .table-responsive class because your table will be broken on small on small screens. -->
           <b-table
-            class="table-responsive text-nowrap text-center"
+            class="text-nowrap text-center"
             responsive
             :items="BomDetail"
             :fields="BomItemColumn"
+            outlined
+            bordered
             sort-by="no"
           >
             <template v-slot:cell()="{ value, item, field }">
@@ -48,17 +50,24 @@
               <template v-if="edit != item.no || field.editable == false">
                 {{ value }}
               </template>
-              <b-form-input v-if="(edit == item.no && field.editable == true) && item.neworOld == 'Old'"
+              <b-form-input
+                v-if="
+                  edit == item.no &&
+                  field.editable == true &&
+                  item.neworOld == 'Old'
+                "
                 v-model="item[field.key]"
               />
             </template>
 
-             <template v-slot:cell(source)="{ value, item, field }">
+            <template v-slot:cell(source)="{ value, item, field }">
               <template v-if="edit != item.no || field.editable == false">
                 {{ value }}
               </template>
-              <b-form-select v-if="edit == item.no && field.editable == true"
-                v-model="item[field.key]" :options="sourceOptions"
+              <b-form-select
+                v-if="edit == item.no && field.editable == true"
+                v-model="item[field.key]"
+                :options="sourceOptions"
               />
             </template>
 
@@ -66,8 +75,11 @@
               <template v-if="edit != item.no || field.editable == false">
                 {{ value }}
               </template>
-              <b-form-input v-if="edit == item.no && field.editable == true"
-                v-model="item[field.key]" type="number" />
+              <b-form-input
+                v-if="edit == item.no && field.editable == true"
+                v-model="item[field.key]"
+                type="number"
+              />
             </template>
 
             <template v-slot:cell(actions)="{ item }">
@@ -131,6 +143,7 @@ export default {
           label: "編號",
           sortable: true,
           editable: false,
+          thStyle: { width: "1000px" }
         },
         {
           key: "partLevel",
@@ -240,6 +253,7 @@ export default {
           label: "數量",
           sortable: true,
           editable: true,
+          // thStyle: { width: "100px" }
         },
         {
           key: "category",
@@ -256,7 +270,6 @@ export default {
         {
           key: "actions",
         },
-        // 'actions',
       ],
       partLevelOptions: [
         { value: 0, text: 0 },
@@ -407,7 +420,7 @@ export default {
       }
       if (doEdit) {
         this.BomCurrentRow = { ...row };
-        this.newOldChange(row)
+        this.newOldChange(row);
       }
     },
     ResetEdit() {
@@ -421,7 +434,7 @@ export default {
     },
     newOldChange(item) {
       if (item.neworOld == "New") {
-        item.oldCarType = null
+        item.oldCarType = null;
         this.sourceOptions = [
           { value: "進口件", text: "進口件" },
           { value: "支給件", text: "支給件" },
@@ -435,4 +448,11 @@ export default {
   },
 };
 </script>
+
+<style>
+.ColumnWidth {
+  /* max-width: 5p; */
+  width: 200px;
+}
+</style>
 
