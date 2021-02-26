@@ -1,6 +1,7 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
-  <div id="app">
+  <div field="app">
+    <br />
     <div>
       <b-container>
         <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
@@ -16,34 +17,36 @@
     </div>
 
     <div>
-      <b-table :items="Boms" :fields="Column">
-        <template #cell(index)="data">
-          {{ data.index + 1 }}
-        </template>
-
-        <template #cell(action)="row">
-          <!-- # = v-slot縮寫 -->
-          <b-button
-            variant="outline-primary"
-            size="sm"
-            class="mr-1"
-            @click="ControlModal(row.item)"
-          >
-            詳細資料
-          </b-button>
-        </template>
-      </b-table>
+      <vxe-grid
+        :columns="Column"
+        :data="Boms"
+        align="center"
+        border
+        auto-resize
+        resizable
+      >
+      </vxe-grid>
     </div>
+
     <template>
-      <b-modal v-model="modalParms.show" :title="modalParms.title">
+      <vxe-modal
+        v-model="modalParms.show"
+        :title="modalParms.title"
+        width="90%"
+        height="90%"
+        :lock-scroll = false
+        :esc-closable= true
+        destroy-on-close
+      >
         <BomDetail
           :id="modalParms.assemblyPartNumber"
           :show="modalParms.show"
         />
-      </b-modal>
+      </vxe-modal>
     </template>
   </div>
 </template>
+
 
 <script>
 /* eslint-disable no-unused-vars */
@@ -58,61 +61,75 @@ export default {
       file: null,
       Boms: [],
       Column: [
-        "index",
         {
-          key: "assemblyPartNumber",
+          field: "assemblyPartNumber",
           sortable: true,
-          label: "總成件號",
+          title: "總成件號",
         },
         {
-          key: "assemblyName",
+          field: "assemblyName",
           sortable: true,
-          label: "總成件名",
+          title: "總成件名",
         },
         {
-          key: "assemblyNameEng",
+          field: "assemblyNameEng",
           sortable: true,
-          label: "總成件名(英)",
+          title: "總成件名(英)",
         },
         {
-          key: "customer",
+          field: "customer",
           sortable: true,
-          label: "顧客",
+          title: "顧客",
         },
         {
-          key: "model",
+          field: "model",
           sortable: true,
-          label: "車型",
+          title: "車型",
         },
         {
-          key: "allFinishTime",
+          field: "allFinishTime",
           sortable: true,
-          label: "報價完成時間(預計)",
-          formatter: "DateTimeFormat",
+          title: "報價完成時間(預計)",
         },
         {
-          key: "assemblyRemark",
+          field: "assemblyRemark",
           sortable: true,
-          label: "總成備註",
+          title: "總成備註",
         },
         {
-          key: "createDate",
+          field: "createDate",
           sortable: true,
-          label: "創立時間",
-          formatter: "DateTimeFormat",
+          title: "創立時間",
         },
         {
-          key: "modifyDate",
+          field: "modifyDate",
           sortable: true,
-          label: "最後編輯時間",
-          formatter: "DateTimeFormat",
+          title: "最後編輯時間",
         },
         {
-          key: "status",
+          field: "status",
           sortable: true,
-          label: "狀態",
+          title: "狀態",
         },
-        "action",
+        {
+          title: "操作",
+          slots: {
+            default: ({ row }) => {
+              return [
+                <b-button
+                  variant="outline-success"
+                  class="mr-2"
+                  onClick={() => {
+                    this.ControlModal(row);
+                  }}
+                >
+                  {" "}
+                  詳細資料{" "}
+                </b-button>,
+              ];
+            },
+          },
+        },
       ],
       modalParms: {
         show: false,
@@ -158,13 +175,6 @@ export default {
         return this.$moment(date).format("YYYY-MM-DD");
       }
     },
-    // GetBomDetails(assemblyPartNumber) {
-    //   const { href } = this.$router.resolve({
-    //     name: "GetBomDetail",
-    //     params: { assemblyPartNumber: assemblyPartNumber },
-    //   });
-    //   window.open(href, "_blank", "toolbar=yes, width=1300, height=900");
-    // },
     ControlModal(rowData) {
       this.modalParms.show = true;
       this.modalParms.title = rowData.assemblyPartNumber + "詳細資料";
@@ -173,29 +183,3 @@ export default {
   },
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-.modal-dialog {
-  min-width: 95%;
-  height: 100px;
-  /* overflow-x: initial !important; */
-}
-.modal-content {
-  background-color: #2c3e50;
-  /* overflow-x: auto; */
-}
-.modal-header {
-  background-color: #337ab7;
-  padding: 16px 16px;
-  color: #fff;
-  border-bottom: 2px dashed #337ab7;
-}
-</style>

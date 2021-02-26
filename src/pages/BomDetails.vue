@@ -1,15 +1,15 @@
 <!-- eslint-disable vue/no-unused-vars -->
-<template>
+<!-- #region Body -->
+<!--<template>
   <div id="BomDetails">
     <b-tabs>
       <div>
         <b-tab title="【Bom續頁】">
-          <!-- table-responsive text-nowrap 
+          table-responsive text-nowrap 
           If you want use a .text-nowrap you have to use div wrapper with 
-          .table-responsive class because your table will be broken on small on small screens. -->
+          .table-responsive class because your table will be broken on small on small screens.
           <b-table
-            class="text-nowrap text-center"
-            responsive
+            class="BomTableCss"
             :items="BomDetail"
             :fields="BomItemColumn"
             outlined
@@ -109,7 +109,6 @@
         </b-tab>
         <b-tab title="【夾/治具及設備】">
           <b-table
-            responsive
             :items="FixtureDetail"
             :fields="FixtureItemColumn"
             sort-by="no"
@@ -119,7 +118,28 @@
       </div>
     </b-tabs>
   </div>
+</template> -->
+<!-- #endregion -->
+
+<template>
+  <div>
+    <vxe-grid
+      ref="xGrid"
+      keep-source
+      :columns="bomItemColumn"
+      :data="bomDetailData"
+      show-overflow
+      highlight-current-row
+      align="center"
+      border
+      stripe
+      auto-resize
+      :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
+    >
+    </vxe-grid>
+  </div>
 </template>
+
 
 <script>
 import * as api from "../api/Bom";
@@ -133,264 +153,352 @@ export default {
   },
   data() {
     return {
-      OrderBy: "no",
       edit: null,
-      BomDetail: null,
+      bomDetailData: null,
       BomCurrentRow: null,
-      BomItemColumn: [
+      bomItemColumn: [
         {
-          key: "no",
-          label: "編號",
+          field: "no",
+          title: "編號",
           sortable: true,
-          editable: false,
-          thStyle: { width: "1000px" }
+          minWidth: "10%",
         },
         {
-          key: "partLevel",
-          label: "構成關係",
+          field: "partLevel",
+          title: "構成關係",
           sortable: true,
-          editable: true,
+          minWidth: "7%",
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <vxe-select
+                    v-model={row.partLevel}
+                    options={this.partLevelOptions}
+                  />,
+                ];
+              } else {
+                return row.partLevel;
+              }
+            },
+          },
         },
         {
-          key: "partNumber",
-          label: "件號",
+          field: "partNumber",
+          title: "件號",
           sortable: true,
-          stickyColumn: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "partName",
-          label: "件名",
+          field: "partName",
+          title: "件名",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "partName_Eng",
-          label: "件名(英文)",
+          field: "partName_Eng",
+          title: "件名(英文)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "material",
-          label: "Bom表材質",
+          field: "material",
+          title: "Bom表材質",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "thicknessWire",
-          label: "線徑與板厚",
+          field: "thicknessWire",
+          title: "線徑與板厚",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingNo1",
-          label: "途程代號(1)",
+          field: "routingNo1",
+          title: "途程代號(1)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingRule1",
-          label: "途程規範(1)",
+          field: "routingRule1",
+          title: "途程規範(1)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingNo2",
-          label: "途程代號(2)",
+          field: "routingNo2",
+          title: "途程代號(2)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingRule2",
-          label: "途程規範(2)",
+          field: "routingRule2",
+          title: "途程規範(2)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingNo3",
-          label: "途程代號(3)",
+          field: "routingNo3",
+          title: "途程代號(3)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingRule3",
-          label: "途程規範(3)",
+          field: "routingRule3",
+          title: "途程規範(3)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingNo4",
-          label: "途程代號(4)",
+          field: "routingNo4",
+          title: "途程代號(4)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "routingRule4",
-          label: "途程規範(4)",
+          field: "routingRule4",
+          title: "途程規範(4)",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "neworOld",
-          label: "新件/延用件",
+          field: "neworOld",
+          title: "新件/延用件",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <vxe-select
+                    v-model={row.neworOld}
+                    options={this.newOldOptions}
+                    onChange= {() => this.newOldChangeEvent(row)}
+                  />,
+                ];
+              } else {
+                return row.neworOld;
+              }
+            },
+          },
         },
         {
-          key: "oldCarType",
-          label: "延用車型",
+          field: "oldCarType",
+          title: "延用車型",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          // editRender: { name: "input" },
         },
         {
-          key: "source",
-          label: "來源",
+          field: "source",
+          title: "來源",
           sortable: true,
-          editable: true,
+          minWidth: "5%",
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row) && row.neworOld != null) {
+                return [
+                  <vxe-select
+                    v-model={row.source}
+                    options={this.sourceOptions}
+                  />,
+                ];
+              } else {
+                return row.source;
+              }
+            },
+          },
         },
         {
-          key: "quantity",
-          label: "數量",
+          field: "quantity",
+          title: "數量",
           sortable: true,
-          editable: true,
-          // thStyle: { width: "100px" }
+          minWidth: "5%",
+          editRender: { name: "input" },
         },
         {
-          key: "category",
-          label: "類別",
+          field: "category",
+          title: "類別",
           sortable: true,
-          editable: true,
+          minWidth: "5%",
+          editRender: { name: "input" },
         },
         {
-          key: "remark",
-          label: "備註",
+          field: "remark",
+          title: "備註",
           sortable: true,
-          editable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
         },
         {
-          key: "actions",
+          title: "操作",
+          fixed: "right",
+          slots: {
+            default: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <b-button>儲存</b-button>,
+                  <b-button
+                    onClick={() => {
+                      this.cancelRowEvent();
+                    }}
+                  >
+                    取消
+                  </b-button>,
+                ];
+              } else {
+                return [
+                  <b-button
+                    onClick={() => {
+                      this.editRowEvent(row);
+                    }}
+                  >
+                    {" "}
+                    編輯
+                  </b-button>,
+                ];
+              }
+            },
+          },
+          minWidth: "10%",
         },
       ],
       partLevelOptions: [
-        { value: 0, text: 0 },
-        { value: 1, text: 1 },
-        { value: 2, text: 2 },
-        { value: 3, text: 3 },
-        { value: 4, text: 4 },
-        { value: 5, text: 5 },
-        { value: 6, text: 6 },
-        { value: 7, text: 7 },
-        { value: 8, text: 8 },
-        { value: 9, text: 9 },
+        { value: 0, text: 0, label: 0 },
+        { value: 1, text: 1, label: 1 },
+        { value: 2, text: 2, label: 2 },
+        { value: 3, text: 3, label: 3 },
+        { value: 4, text: 4, label: 4 },
+        { value: 5, text: 5, label: 5 },
+        { value: 6, text: 6, label: 6 },
+        { value: 7, text: 7, label: 7 },
+        { value: 8, text: 8, label: 8 },
+        { value: 9, text: 9, label: 9 },
       ],
       newOldOptions: [
-        { value: "New", text: "New" },
-        { value: "Old", text: "Old" },
+        { value: "New", text: "New", label: "New" },
+        { value: "Old", text: "Old", label: "Old" },
       ],
       sourceOptions: null,
-      MeasuringDetail: null,
+      measuringDetailData: null,
       MeasuringItemColumn: [
         {
-          key: "no",
-          label: "編號",
+          field: "no",
+          title: "編號",
           sortable: true,
         },
         {
-          key: "partNumber",
-          label: "件號",
+          field: "partNumber",
+          title: "件號",
           sortable: true,
         },
         {
-          key: "needMeausring",
-          label: "需要量檢具",
+          field: "needMeausring",
+          title: "需要量檢具",
           sortable: true,
         },
         {
-          key: "quantity",
-          label: "數量",
+          field: "quantity",
+          title: "數量",
           sortable: true,
         },
         {
-          key: "measuringName",
-          label: "量檢具名稱",
+          field: "measuringName",
+          title: "量檢具名稱",
           sortable: true,
         },
         {
-          key: "measuringRemark",
-          label: "量檢具備註",
+          field: "measuringRemark",
+          title: "量檢具備註",
           sortable: true,
         },
       ],
-      FixtureDetail: null,
+      fixtureDetailData: null,
       FixtureItemColumn: [
         {
-          key: "no",
-          label: "編號",
+          field: "no",
+          title: "編號",
           sortable: true,
         },
         {
-          key: "partNumber",
-          label: "件號",
+          field: "partNumber",
+          title: "件號",
           sortable: true,
         },
         {
-          key: "engineeringName",
-          label: "工程名稱",
+          field: "engineeringName",
+          title: "工程名稱",
           sortable: true,
         },
         {
-          key: "engineeringOrder",
-          label: "組立工序",
+          field: "engineeringOrder",
+          title: "組立工序",
           sortable: true,
         },
         {
-          key: "share",
-          label: "是否共用",
+          field: "share",
+          title: "是否共用",
           sortable: true,
         },
         {
-          key: "needFixture",
-          label: "需要夾治具",
+          field: "needFixture",
+          title: "需要夾治具",
           sortable: true,
         },
         {
-          key: "fixtureName",
-          label: "夾治具名稱",
+          field: "fixtureName",
+          title: "夾治具名稱",
           sortable: true,
         },
         {
-          key: "fixtureQuantity",
-          label: "夾治具套數",
+          field: "fixtureQuantity",
+          title: "夾治具套數",
           sortable: true,
         },
         {
-          key: "departemntId",
-          label: "報價單位",
+          field: "departemntId",
+          title: "報價單位",
           sortable: true,
         },
         {
-          key: "fixtureRemark",
-          label: "夾治具備註",
+          field: "fixtureRemark",
+          title: "夾治具備註",
           sortable: true,
         },
         {
-          key: "needEquipment",
-          label: "需要設備",
+          field: "needEquipment",
+          title: "需要設備",
           sortable: true,
         },
         {
-          key: "equipmentName",
-          label: "設備名稱",
+          field: "equipmentName",
+          title: "設備名稱",
           sortable: true,
         },
         {
-          key: "equipmentQuantity",
-          label: "設備數量",
+          field: "equipmentQuantity",
+          title: "設備數量",
           sortable: true,
         },
         {
-          key: "equipmentRemark",
-          label: "設備備註",
+          field: "equipmentRemark",
+          title: "設備備註",
           sortable: true,
         },
       ],
@@ -404,55 +512,43 @@ export default {
       const self = this;
       await api.GetBomDetail.r(params)
         .then((res) => {
-          self.BomDetail = res.data.bomItems;
-          self.MeasuringDetail = res.data.measuringItems;
-          self.FixtureDetail = res.data.fixtureItems;
+          self.bomDetailData = res.data.bomItems;
+          self.measuringDetailData = res.data.measuringItems;
+          self.fixtureDetailData = res.data.fixtureItems;
         })
         .catch(function (error) {
           alert(error.response.data.Error.join("\n"));
         });
     },
-    EditBomRow(row) {
-      this.edit = this.edit !== row.no ? row.no : null;
-      let doEdit = true;
-      if (this.BomCurrentRow && !confirm("尚有資料未儲存，是否要繼續?")) {
-        doEdit = false;
-      }
-      if (doEdit) {
-        this.BomCurrentRow = { ...row };
-        this.newOldChange(row);
-      }
+    editRowEvent(row) {
+      this.$refs.xGrid.setActiveRow(row);
     },
-    ResetEdit() {
-      this.edit = null;
-      this.BomCurrentRow = null;
+    cancelRowEvent() {
+      this.$refs.xGrid.clearActived();
     },
     SaveBomRow(row) {
       //執行api
       console.log(row);
       this.ResetEdit();
     },
-    newOldChange(item) {
-      if (item.neworOld == "New") {
-        item.oldCarType = null;
+     newOldChangeEvent (row) {
+      console.log(row);
+      if (row.neworOld == "New") {
+        row.oldCarType = null;
         this.sourceOptions = [
-          { value: "進口件", text: "進口件" },
-          { value: "支給件", text: "支給件" },
-          { value: "自製件", text: "自製件" },
-          { value: "外包件", text: "外包件" },
+          { value: "進口件", text: "進口件", label: "進口件" },
+          { value: "支給件", text: "支給件", label: "支給件" },
+          { value: "自製件", text: "自製件", label: "自製件" },
+          { value: "外包件", text: "外包件", label: "外包件" },
         ];
-      } else if (item.neworOld == "Old") {
-        this.sourceOptions = [{ value: "延用件", text: "延用件" }];
+      } else if (row.neworOld == "Old") {
+        this.sourceOptions = [
+          { value: "延用件", text: "延用件", label: "延用件" },
+        ];
       }
     },
   },
 };
 </script>
 
-<style>
-.ColumnWidth {
-  /* max-width: 5p; */
-  width: 200px;
-}
-</style>
 

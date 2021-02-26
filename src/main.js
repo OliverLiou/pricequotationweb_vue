@@ -11,6 +11,10 @@ import moment from "vue-moment";
 import VModal from 'vue-js-modal'
 import * as BomApi from "./api/Bom";
 
+import 'xe-utils'
+import VXETable from 'vxe-table'
+import 'vxe-table/lib/style.css'
+
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue);
 // Optionally install the BootstrapVue icon components plugin
@@ -21,6 +25,7 @@ Vue.use(moment);
 Vue.config.productionTip = false
 Vue.use(VModal)
 Vue.use(BomApi);
+Vue.use(VXETable)
 
 Vue.prototype.$Moment = moment
 Vue.prototype.$BomApi = BomApi
