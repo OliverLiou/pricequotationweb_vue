@@ -134,6 +134,7 @@
       border
       stripe
       auto-resize
+      resizable
       :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
     >
     </vxe-grid>
@@ -356,7 +357,7 @@ export default {
                   <b-button>儲存</b-button>,
                   <b-button
                     onClick={() => {
-                      this.cancelRowEvent();
+                      this.cancelRowEvent(row);
                     }}
                   >
                     取消
@@ -523,7 +524,9 @@ export default {
     editRowEvent(row) {
       this.$refs.xGrid.setActiveRow(row);
     },
-    cancelRowEvent() {
+    cancelRowEvent(row) {
+      // const fieldName = this.$refs.xGrid.getCurrentColumn();
+      this.$refs.xGrid.revertData(row)
       this.$refs.xGrid.clearActived();
     },
     SaveBomRow(row) {
