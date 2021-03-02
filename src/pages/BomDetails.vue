@@ -289,7 +289,7 @@ export default {
                   <vxe-select
                     v-model={row.neworOld}
                     options={this.newOldOptions}
-                    onChange= {() => this.newOldChangeEvent(row)}
+                    onChange={() => this.newOldChangeEvent(row)}
                   />,
                 ];
               } else {
@@ -309,7 +309,7 @@ export default {
           field: "source",
           title: "來源",
           sortable: true,
-          minWidth: "5%",
+          minWidth: "8%",
           editRender: { name: "input" },
           slots: {
             edit: ({ row }) => {
@@ -330,15 +330,53 @@ export default {
           field: "quantity",
           title: "數量",
           sortable: true,
-          minWidth: "5%",
+          minWidth: "8%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.quantity} type="number" />];
+              }
+            },
+          },
         },
         {
           field: "category",
-          title: "類別",
+          title: "製造類別",
           sortable: true,
-          minWidth: "5%",
+          minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <vxe-select
+                    v-model={row.category}
+                    options={this.categoryOptions}
+                  />,
+                ];
+              }
+            },
+          },
+        },
+        {
+          field: "modelCategory",
+          title: "模具類別",
+          sortable: true,
+          minWidth: "10%",
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <vxe-select
+                    v-model={row.modelCategory}
+                    options={this.modelCategoryOptions}
+                  />,
+                ];
+              }
+            },
+          },
         },
         {
           field: "remark",
@@ -354,25 +392,24 @@ export default {
             default: ({ row }) => {
               if (this.$refs.xGrid.isActiveByRow(row)) {
                 return [
-                  <b-button>儲存</b-button>,
-                  <b-button
+                  <vxe-button status="success" content="儲存" />,
+                  <vxe-button
+                    status="danger"
+                    content="取消"
                     onClick={() => {
                       this.cancelRowEvent(row);
                     }}
-                  >
-                    取消
-                  </b-button>,
+                  />,
                 ];
               } else {
                 return [
-                  <b-button
+                  <vxe-button
+                    status="primary"
+                    content="編輯"
                     onClick={() => {
                       this.editRowEvent(row);
                     }}
-                  >
-                    {" "}
-                    編輯
-                  </b-button>,
+                  />,
                 ];
               }
             },
@@ -396,7 +433,17 @@ export default {
         { value: "New", text: "New", label: "New" },
         { value: "Old", text: "Old", label: "Old" },
       ],
+      categoryOptions: [
+        { value: "沖壓件", text: "沖壓件", label: "沖壓件" },
+        { value: "塑膠件", text: "塑膠件", label: "塑膠件" },
+        { value: "鍛造件", text: "鍛造件", label: "鍛造件" },
+        { value: "其它", text: "其它", label: "其它" },
+      ],
       sourceOptions: null,
+      modelCategoryOptions: [
+        { value: "模具自製", text: "模具自製", label: "模具自製" },
+        { value: "模具外包", text: "模具外包", label: "模具外包" },
+      ],
       measuringDetailData: null,
       MeasuringItemColumn: [
         {
@@ -526,7 +573,7 @@ export default {
     },
     cancelRowEvent(row) {
       // const fieldName = this.$refs.xGrid.getCurrentColumn();
-      this.$refs.xGrid.revertData(row)
+      this.$refs.xGrid.revertData(row);
       this.$refs.xGrid.clearActived();
     },
     SaveBomRow(row) {
@@ -534,7 +581,7 @@ export default {
       console.log(row);
       this.ResetEdit();
     },
-     newOldChangeEvent (row) {
+    newOldChangeEvent(row) {
       console.log(row);
       if (row.neworOld == "New") {
         row.oldCarType = null;
