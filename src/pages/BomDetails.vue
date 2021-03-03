@@ -135,6 +135,7 @@
       stripe
       auto-resize
       resizable
+      show-header-overflow
       :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
     >
     </vxe-grid>
@@ -303,7 +304,17 @@ export default {
           title: "延用車型",
           sortable: true,
           minWidth: "10%",
-          // editRender: { name: "input" },
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (
+                this.$refs.xGrid.isActiveByRow(row) &&
+                row.neworOld === "Old"
+              ) {
+                return [<vxe-input v-model={row.oldCarType} />];
+              }
+            },
+          },
         },
         {
           field: "source",
@@ -569,20 +580,17 @@ export default {
         });
     },
     editRowEvent(row) {
+      this.newOldChangeEvent(row);
       this.$refs.xGrid.setActiveRow(row);
     },
     cancelRowEvent(row) {
-      // const fieldName = this.$refs.xGrid.getCurrentColumn();
-      this.$refs.xGrid.revertData(row);
       this.$refs.xGrid.clearActived();
+      this.$refs.xGrid.revertData(row);
     },
-    SaveBomRow(row) {
+    SaveBomRow() {
       //執行api
-      console.log(row);
-      this.ResetEdit();
     },
     newOldChangeEvent(row) {
-      console.log(row);
       if (row.neworOld == "New") {
         row.oldCarType = null;
         this.sourceOptions = [
@@ -596,6 +604,11 @@ export default {
           { value: "延用件", text: "延用件", label: "延用件" },
         ];
       }
+      if (!this.sourceOptions.some(item => item.value === row.source)) {
+        console.log('不存在')
+        row.source = null
+      } 
+      
     },
   },
 };
