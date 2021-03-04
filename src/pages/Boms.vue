@@ -2,19 +2,22 @@
 <template>
   <div field="app">
     <br />
-    <div>
-      <b-container>
-        <b-form-group label="Bom表(Excel):" label-cols-sm="2" label-size="sm">
-          <b-form-file
-            accept=".xlsx"
-            v-model="file"
-            ref="file-input"
-            class="mb-2"
-          ></b-form-file>
-          <b-button class="mr-2" @click="UploadBom">上傳</b-button>
+    <b-container>
+      <b-form-group>
+        <vxe-input v-model="oppoNumber" placeholder="請輸入OPPO號碼" />
+        <b-form-group>
+          <div>
+            <b-form-file
+              ref="file-input"
+              multiple
+              accept=".xlsx"
+              v-model="files"
+            />
+            <b-button variant="info" @click="UploadBom">上傳</b-button>
+          </div>
         </b-form-group>
-      </b-container>
-    </div>
+      </b-form-group>
+    </b-container>
 
     <div>
       <vxe-grid
@@ -34,8 +37,8 @@
         :title="modalParms.title"
         width="90%"
         height="90%"
-        :lock-scroll = false
-        :esc-closable= true
+        :lock-scroll="false"
+        :esc-closable="true"
         destroy-on-close
       >
         <BomDetail
@@ -58,7 +61,8 @@ export default {
   name: "App",
   data() {
     return {
-      file: null,
+      oppoNumber: '',
+      files: null,
       Boms: [],
       Column: [
         {
@@ -149,25 +153,34 @@ export default {
           self.Boms = res.data;
         })
         .catch(function (error) {
+          console.log(error)
           alert(error.response.data.Error.join("\n"));
         });
     },
-    UploadBom() {
-      if (this.file == null) {
+    async UploadBom() {
+      if (this.oppoNumber == '') {
+        alert("請輸入OPPO編號！");
+        return;
+      }
+      if (this.files == null ) {
         alert("請選擇檔案後再上傳！");
         return;
       }
       let formData = new FormData();
-      formData.append("file", this.file);
-      this.$BomApi.CreateBom.r(formData, {
+      this.files.forEach(function (params) {
+        formData.append("file", params);
+      });
+      this.$BomApi.CreateBoms.r(this.oppoNumber, formData, {
         Headers: { "Content-Type": "multipart/form-data" },
       })
         .then(function () {
-          this.file = this.$refs.file.files[0];
+          // this.files = this.$refs.file.files[0];
+          // this.$vxeModal("上傳成功！");
           alert("上傳成功！");
+          this.GetBoms();
         })
         .catch(function (error) {
-          alert(error.response.data.Error.join("\n"));
+          alert("上傳失敗！" + error.response.data.Error.join("\n"));
         });
     },
     DateTimeFormat(date) {

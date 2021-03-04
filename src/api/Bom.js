@@ -1,9 +1,9 @@
 import instance from '@/api/index'
 var preUrlPath = "/Bom";
 
-const CreateBom = {
-    r: (params) => {
-        return instance.post(`${preUrlPath}/CreateBom`, params)
+const CreateBoms = {
+    r: (query,params) => {
+        return instance.post(`${preUrlPath}/CreateBoms/${query}`, params)
     }
 }
 
@@ -20,7 +20,7 @@ const GetBomDetail = {
 }
 
 export {
-    CreateBom,
+    CreateBoms,
     GetBoms,
     GetBomDetail
 }

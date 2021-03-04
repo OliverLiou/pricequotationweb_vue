@@ -14,6 +14,7 @@ import * as BomApi from "./api/Bom";
 import 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
+import vxeModal from 'vxe-table/packages/modal'
 
 // Make BootstrapVue available throughout your project
 Vue.use(BootstrapVue);
@@ -26,10 +27,12 @@ Vue.config.productionTip = false
 Vue.use(VModal)
 Vue.use(BomApi);
 Vue.use(VXETable)
+Vue.use(vxeModal)
 
 Vue.prototype.$Moment = moment
 Vue.prototype.$BomApi = BomApi
 Vue.prototype.$VModal = VModal
+Vue.prototype.$vxeModal = vxeModal
 
 new Vue({
   render: h => h(App),
