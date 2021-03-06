@@ -33,6 +33,7 @@ Vue.prototype.$Moment = moment
 Vue.prototype.$BomApi = BomApi
 Vue.prototype.$VModal = VModal
 Vue.prototype.$vxeModal = vxeModal
+Vue.prototype.$axios = axios
 
 new Vue({
   render: h => h(App),

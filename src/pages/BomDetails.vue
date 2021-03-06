@@ -7,13 +7,13 @@
       :columns="bomItemColumn"
       :data="bomDetailData"
       show-overflow
+      show-header-overflow
       highlight-current-row
       align="center"
       border
       stripe
-      auto-resize
       resizable
-      show-header-overflow
+      height= "600"
       :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
     >
     </vxe-grid>
@@ -69,7 +69,7 @@ export default {
           title: "件號",
           sortable: true,
           minWidth: "10%",
-          editRender: { name: "input" },
+          // editRender: { name: "input" },
         },
         {
           field: "partName",
@@ -303,7 +303,7 @@ export default {
               }
             },
           },
-          minWidth: "10%",
+          minWidth: "13%",
         },
       ],
       partLevelOptions: [
@@ -483,10 +483,8 @@ export default {
         ];
       }
       if (!this.sourceOptions.some(item => item.value === row.source)) {
-        console.log('不存在')
         row.source = null
       } 
-      
     },
   },
 };

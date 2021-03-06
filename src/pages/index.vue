@@ -13,7 +13,7 @@
               accept=".xlsx"
               v-model="files"
             />
-            <b-button variant="info" @click="UploadBom">上傳</b-button>
+            <b-button variant="info" @click="UploadBoms">上傳</b-button>
           </div>
         </b-form-group>
       </b-form-group>
@@ -21,14 +21,15 @@
 
     <div>
       <vxe-grid
-        :columns="Column"
-        :data="Boms"
         align="center"
         border
         auto-resize
         resizable
         show-overflow
         show-header-overflow
+        :data="Oppos"
+        :columns="tableColumns"
+        :tree-config="{ key: 'oPPOId', children: 'boms' }"
       >
       </vxe-grid>
     </div>
@@ -37,8 +38,8 @@
       <vxe-modal
         v-model="modalParms.show"
         :title="modalParms.title"
-        width="90%"
-        height="90%"
+        width="100%"
+        height="95%"
         :esc-closable="true"
         destroy-on-close
       >
@@ -64,8 +65,19 @@ export default {
     return {
       oppoNumber: "",
       files: null,
-      Boms: [],
-      Column: [
+      Oppos: [],
+      tableColumns: [
+        {
+          field: "status",
+          sortable: true,
+          title: "狀態",
+        },
+        {
+          field: "oppoId",
+          sortable: true,
+          title: "OPPO編號",
+          treeNode: true,
+        },
         {
           field: "assemblyPartNumber",
           sortable: true,
@@ -95,7 +107,7 @@ export default {
           field: "allFinishTime",
           sortable: true,
           title: "報價完成時間(預計)",
-          formatter: this.formatterDate
+          formatter: this.formatterDate,
         },
         {
           field: "assemblyRemark",
@@ -106,35 +118,31 @@ export default {
           field: "createDate",
           sortable: true,
           title: "創立時間",
-          formatter: this.formatterDate
+          formatter: this.formatterDate,
         },
         {
           field: "modifyDate",
           sortable: true,
           title: "最後編輯時間",
-          formatter: this.formatterDate
-        },
-        {
-          field: "status",
-          sortable: true,
-          title: "狀態",
+          formatter: this.formatterDate,
         },
         {
           title: "操作",
           slots: {
             default: ({ row }) => {
-              return [
-                <b-button
-                  variant="outline-success"
-                  class="mr-2"
-                  onClick={() => {
-                    this.ControlModal(row);
-                  }}
-                >
-                  {" "}
-                  詳細資料{" "}
-                </b-button>,
-              ];
+              if (row.status == null) {
+                return [
+                  <b-button
+                    variant="outline-success"
+                    class="mr-2"
+                    onClick={() => {
+                      this.ControlModal(row);
+                    }}
+                  >
+                    詳細資料
+                  </b-button>,
+                ];
+              }
             },
           },
         },
@@ -147,21 +155,20 @@ export default {
     };
   },
   async mounted() {
-    this.GetBoms();
+    this.GetOppos();
   },
   methods: {
-    async GetBoms() {
-      const self = this;
-      await this.$BomApi.GetBoms.r()
+    async GetOppos() {
+      await this.$BomApi.GetOppos.r()
         .then((res) => {
-          self.Boms = res.data;
+          this.Oppos = res.data;
         })
         .catch(function (error) {
-          console.log(error);
-          alert(error.response.data.Error.join("\n"));
+          this.$refs.$vxeModal.alert(error.response.data.Error.join("\n"));
+          // alert("error")
         });
     },
-    async UploadBom() {
+    async UploadBoms() {
       if (this.oppoNumber == "") {
         alert("請輸入OPPO編號！");
         return;
@@ -178,19 +185,12 @@ export default {
         Headers: { "Content-Type": "multipart/form-data" },
       })
         .then(function () {
-          // this.files = this.$refs.file.files[0];
-          // this.$vxeModal("上傳成功！");
-          alert("上傳成功！");
-          this.GetBoms();
+          this.$vxeModal.alert("上傳成功！");
+          this.GetOppos();
         })
         .catch(function (error) {
           alert("上傳失敗！" + error.response.data.Error.join("\n"));
         });
-    },
-    DateTimeFormat(date) {
-      if (date != null) {
-        return this.$moment(date).format("YYYY-MM-DD");
-      }
     },
     ControlModal(rowData) {
       this.modalParms.show = true;

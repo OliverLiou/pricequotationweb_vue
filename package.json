@@ -20,6 +20,7 @@
     "vue-router": "^3.4.9",
     "vue-upload-component": "^2.8.22",
     "vxe-table": "^3.1.6",
+    "xe-ajax": "^4.0.5",
     "xe-utils": "^3.1.8"
   },
   "devDependencies": {
