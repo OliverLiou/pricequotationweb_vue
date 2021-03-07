@@ -13,7 +13,7 @@
               accept=".xlsx"
               v-model="files"
             />
-            <b-button variant="info" @click="UploadBoms">上傳</b-button>
+            <b-button variant="info" @click="CreateOppo">上傳</b-button>
           </div>
         </b-form-group>
       </b-form-group>
@@ -142,6 +142,18 @@ export default {
                     詳細資料
                   </b-button>,
                 ];
+              } else if (row.status <= 3 ) {
+                return [
+                  <b-button
+                    variant="outline-warning"
+                    class="mr-2"
+                    onClick={() => {
+                      
+                    }}
+                  >
+                    上傳工裝表
+                  </b-button>
+                ]
               }
             },
           },
@@ -159,16 +171,16 @@ export default {
   },
   methods: {
     async GetOppos() {
-      await this.$BomApi.GetOppos.r()
+      await this.$OppoApi.GetOppos.r()
         .then((res) => {
           this.Oppos = res.data;
         })
         .catch(function (error) {
-          this.$refs.$vxeModal.alert(error.response.data.Error.join("\n"));
-          // alert("error")
+          // this.$refs.$vxeModal.alert(error.response.data.Error.join("\n"));
+          alert(error)
         });
     },
-    async UploadBoms() {
+    async CreateOppo() {
       if (this.oppoNumber == "") {
         alert("請輸入OPPO編號！");
         return;
@@ -181,15 +193,15 @@ export default {
       this.files.forEach(function (params) {
         formData.append("file", params);
       });
-      this.$BomApi.CreateBoms.r(this.oppoNumber, formData, {
-        Headers: { "Content-Type": "multipart/form-data" },
-      })
-        .then(function () {
-          this.$vxeModal.alert("上傳成功！");
+      this.$OppoApi.CreateOppo.r(this.oppoNumber, formData)
+        .then(()=>{
           this.GetOppos();
+          this.oppoNumber = ''
+          this.files = []
+          alert('上傳成功！')
         })
         .catch(function (error) {
-          alert("上傳失敗！" + error.response.data.Error.join("\n"));
+          alert("上傳失敗！" + error);
         });
     },
     ControlModal(rowData) {

@@ -10,6 +10,7 @@ import axios from "axios";
 import moment from "vue-moment";
 import VModal from 'vue-js-modal'
 import * as BomApi from "./api/Bom";
+import * as OppoApi from "./api/Oppo";
 
 import 'xe-utils'
 import VXETable from 'vxe-table'
@@ -31,6 +32,7 @@ Vue.use(vxeModal)
 
 Vue.prototype.$Moment = moment
 Vue.prototype.$BomApi = BomApi
+Vue.prototype.$OppoApi = OppoApi
 Vue.prototype.$VModal = VModal
 Vue.prototype.$vxeModal = vxeModal
 Vue.prototype.$axios = axios
