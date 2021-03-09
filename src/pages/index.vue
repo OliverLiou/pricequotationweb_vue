@@ -21,6 +21,7 @@
 
     <div>
       <vxe-grid
+        ref="xTable"
         align="center"
         border
         auto-resize
@@ -142,18 +143,18 @@ export default {
                     詳細資料
                   </b-button>,
                 ];
-              } else if (row.status <= 3 ) {
+              } else if (row.status <= 3) {
                 return [
                   <b-button
                     variant="outline-warning"
                     class="mr-2"
                     onClick={() => {
-                      
+                      this.UpLoadBom(row.oppoId);
                     }}
                   >
                     上傳工裝表
-                  </b-button>
-                ]
+                  </b-button>,
+                ];
               }
             },
           },
@@ -175,12 +176,12 @@ export default {
         .then((res) => {
           this.Oppos = res.data;
         })
-        .catch(function (error) {
-          // this.$refs.$vxeModal.alert(error.response.data.Error.join("\n"));
-          alert(error)
+        .catch((res) => {
+          alert(res.response.data.Error.join("\n"));
         });
     },
     async CreateOppo() {
+      this.oppoNumber = this.oppoNumber.toUpperCase();
       if (this.oppoNumber == "") {
         alert("請輸入OPPO編號！");
         return;
@@ -194,14 +195,14 @@ export default {
         formData.append("file", params);
       });
       this.$OppoApi.CreateOppo.r(this.oppoNumber, formData)
-        .then(()=>{
+        .then(() => {
           this.GetOppos();
-          this.oppoNumber = ''
-          this.files = []
-          alert('上傳成功！')
+          this.oppoNumber = "";
+          this.files = [];
+          alert("上傳成功！");
         })
-        .catch(function (error) {
-          alert("上傳失敗！" + error);
+        .catch((res) => {
+          alert(res.response.data.Error.join("\n"));
         });
     },
     ControlModal(rowData) {
@@ -211,6 +212,23 @@ export default {
     },
     formatterDate({ cellValue }) {
       return XEUtils.toDateString(cellValue, "yyyy-MM-dd");
+    },
+    async UpLoadBom(oppoId) {
+      if (oppoId == null) {
+        alert("oppoId不得為空！");
+      }
+      this.$refs.xTable.readFile().then((excelFile) => {
+        const formData = new FormData();
+        formData.append("file", excelFile.file);
+        this.$BomApi.CreateBom.r(oppoId, formData)
+          .then(() => {
+            alert("上傳成功！");
+            this.GetOppos();
+          })
+          .catch((res) => {
+            alert(res.response.data.Error.join("\n"));
+          });
+      });
     },
   },
 };

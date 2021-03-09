@@ -157,7 +157,6 @@ export default {
           self.Boms = res.data;
         })
         .catch(function (error) {
-          console.log(error);
           alert(error.response.data.Error.join("\n"));
         });
     },

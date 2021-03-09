@@ -1,22 +1,83 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
-  <div>
-    <vxe-grid
-      ref="xGrid"
-      keep-source
-      :columns="bomItemColumn"
-      :data="bomDetailData"
-      show-overflow
-      show-header-overflow
-      highlight-current-row
-      align="center"
-      border
-      stripe
-      resizable
-      height= "600"
-      :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
-    >
-    </vxe-grid>
+  <div class="app">
+    <br />
+    <p>
+      <vxe-radio-group v-model="selectTab">
+        <vxe-radio-button
+          label="bomDetail"
+          content="Bom續頁"
+        ></vxe-radio-button>
+        <vxe-radio-button
+          label="measuringDeatil"
+          content="量/檢具"
+        ></vxe-radio-button>
+        <vxe-radio-button
+          label="fixtureDetail"
+          content="夾/治具及設備"
+        ></vxe-radio-button>
+      </vxe-radio-group>
+    </p>
+    <div v-show="selectTab === 'bomDetail'">
+      <vxe-grid
+        ref="xGrid"
+        keep-source
+        :columns="bomItemColumn"
+        :data="bomDetailData"
+        show-overflow
+        show-header-overflow
+        highlight-current-row
+        align="center"
+        border
+        stripe
+        resizable
+        height="700"
+        :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
+        :sync-resize="selectTab"
+        :loading="dataReading"
+      >
+      </vxe-grid>
+    </div>
+
+    <div v-show="selectTab === 'measuringDeatil'">
+      <vxe-grid
+        ref="xGrid2"
+        keep-source
+        :columns="measuringItemColumn"
+        :data="measuringDetailData"
+        show-overflow
+        show-header-overflow
+        highlight-current-row
+        align="center"
+        border
+        stripe
+        resizable
+        height="700"
+        :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
+        :sync-resize="selectTab"
+      >
+      </vxe-grid>
+    </div>
+
+    <div v-show="selectTab === 'fixtureDetail'">
+      <vxe-grid
+        ref="xGrid3"
+        keep-source
+        :columns="fixtureItemColumn"
+        :data="fixtureDetailData"
+        show-overflow
+        show-header-overflow
+        highlight-current-row
+        align="center"
+        border
+        stripe
+        resizable
+        height="700"
+        :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
+        :sync-resize="selectTab"
+      >
+      </vxe-grid>
+    </div>
   </div>
 </template>
 
@@ -33,15 +94,21 @@ export default {
   },
   data() {
     return {
-      edit: null,
+      dataReading: true,
+      selectTab: "bomDetail",
       bomDetailData: null,
       BomCurrentRow: null,
       bomItemColumn: [
         {
+          type: "seq",
+          width: "3%"
+        },
+        {
           field: "bomItemId",
           title: "編號",
           sortable: true,
-          minWidth: "10%",
+          width: "10%",
+          visible: false
         },
         {
           field: "partLevel",
@@ -69,7 +136,14 @@ export default {
           title: "件號",
           sortable: true,
           minWidth: "10%",
-          // editRender: { name: "input" },
+          editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.partNumber} />];
+              }
+            },
+          },
         },
         {
           field: "partName",
@@ -77,6 +151,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.partName} />];
+              }
+            },
+          },
         },
         {
           field: "partName_Eng",
@@ -84,6 +165,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.partName_Eng} />];
+              }
+            }
+          }
         },
         {
           field: "material",
@@ -91,6 +179,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.material} />];
+              }
+            }
+          }
         },
         {
           field: "thicknessWire",
@@ -98,6 +193,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.thicknessWire} />];
+              }
+            }
+          }
         },
         {
           field: "routingNo1",
@@ -105,6 +207,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingNo1} />];
+              }
+            }
+          }
         },
         {
           field: "routingRule1",
@@ -112,6 +221,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingRule1} />];
+              }
+            }
+          }
         },
         {
           field: "routingNo2",
@@ -119,6 +235,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingNo2} />];
+              }
+            }
+          }
         },
         {
           field: "routingRule2",
@@ -126,6 +249,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingRule2} />];
+              }
+            }
+          }
         },
         {
           field: "routingNo3",
@@ -133,6 +263,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingNo3} />];
+              }
+            }
+          }
         },
         {
           field: "routingRule3",
@@ -140,6 +277,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingRule3} />];
+              }
+            }
+          }
         },
         {
           field: "routingNo4",
@@ -147,6 +291,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingNo4} />];
+              }
+            }
+          }
         },
         {
           field: "routingRule4",
@@ -154,6 +305,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.routingRule4} />];
+              }
+            }
+          }
         },
         {
           field: "neworOld",
@@ -273,6 +431,13 @@ export default {
           sortable: true,
           minWidth: "10%",
           editRender: { name: "input" },
+          slots: {
+            edit: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [<vxe-input v-model={row.remark} />];
+              }
+            }
+          }
         },
         {
           title: "操作",
@@ -281,7 +446,13 @@ export default {
             default: ({ row }) => {
               if (this.$refs.xGrid.isActiveByRow(row)) {
                 return [
-                  <vxe-button status="success" content="儲存" />,
+                  <vxe-button
+                    status="success"
+                    content="儲存"
+                    onClick={() => {
+                      this.BomItemUpdate(row);
+                    }}
+                  />,
                   <vxe-button
                     status="danger"
                     content="取消"
@@ -303,7 +474,7 @@ export default {
               }
             },
           },
-          minWidth: "13%",
+          minWidth: "12%",
         },
       ],
       partLevelOptions: [
@@ -334,11 +505,16 @@ export default {
         { value: "模具外包", text: "模具外包", label: "模具外包" },
       ],
       measuringDetailData: null,
-      MeasuringItemColumn: [
+      measuringItemColumn: [
         {
-          field: "no",
+          type: "seq",
+          width: "3%"
+        },
+        {
+          field: "measuringItemId",
           title: "編號",
           sortable: true,
+          visible: false
         },
         {
           field: "partNumber",
@@ -349,29 +525,42 @@ export default {
           field: "needMeausring",
           title: "需要量檢具",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "quantity",
           title: "數量",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "measuringName",
           title: "量檢具名稱",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "measuringRemark",
           title: "量檢具備註",
           sortable: true,
+          editRender: { name: "input" },
+        },
+        {
+          title: "操作",
+          slots: {},
         },
       ],
       fixtureDetailData: null,
-      FixtureItemColumn: [
+      fixtureItemColumn: [
         {
-          field: "no",
+          type: "seq",
+          width: "3%"
+        },
+        {
+          field: "fixtureItemId",
           title: "編號",
           sortable: true,
+          visible: false
         },
         {
           field: "partNumber",
@@ -382,80 +571,98 @@ export default {
           field: "engineeringName",
           title: "工程名稱",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "engineeringOrder",
           title: "組立工序",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "share",
           title: "是否共用",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "needFixture",
           title: "需要夾治具",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "fixtureName",
           title: "夾治具名稱",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "fixtureQuantity",
           title: "夾治具套數",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "departemntId",
           title: "報價單位",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "fixtureRemark",
           title: "夾治具備註",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "needEquipment",
           title: "需要設備",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "equipmentName",
           title: "設備名稱",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "equipmentQuantity",
           title: "設備數量",
           sortable: true,
+          editRender: { name: "input" },
         },
         {
           field: "equipmentRemark",
           title: "設備備註",
           sortable: true,
+          editRender: { name: "input" },
+        },
+        {
+          title: "操作",
+          slots: {},
         },
       ],
     };
   },
   mounted() {
-    this.GetBomDetail(this.id);
+    this.GetBomItems(this.id);
   },
   methods: {
-    async GetBomDetail(params) {
+    async GetBomItems(params) {
+      this.dataReading = true;
       const self = this;
-      await api.GetBomDetail.r(params)
+      await api.GetBomItems.r(params)
         .then((res) => {
           self.bomDetailData = res.data.bomItems;
           self.measuringDetailData = res.data.measuringItems;
           self.fixtureDetailData = res.data.fixtureItems;
         })
-        .catch(function (error) {
-          alert(error.response.data.Error.join("\n"));
+        .catch((res) => {
+          alert(res.response.data.Error.join("\n"));
         });
+      this.dataReading = false;
     },
     editRowEvent(row) {
       this.newOldChangeEvent(row);
@@ -464,9 +671,6 @@ export default {
     cancelRowEvent(row) {
       this.$refs.xGrid.clearActived();
       this.$refs.xGrid.revertData(row);
-    },
-    SaveBomRow() {
-      //執行api
     },
     newOldChangeEvent(row) {
       if (row.neworOld == "New") {
@@ -482,9 +686,19 @@ export default {
           { value: "延用件", text: "延用件", label: "延用件" },
         ];
       }
-      if (!this.sourceOptions.some(item => item.value === row.source)) {
-        row.source = null
-      } 
+      if (!this.sourceOptions.some((item) => item.value === row.source)) {
+        row.source = null;
+      }
+    },
+    async BomItemUpdate(row) {
+      await api.UpdateBomItem.r(row.bomItemId, row)
+        .then(() => {
+          alert("更新成功！");
+          this.GetBomItems(this.id);
+        })
+        .catch((res) => {
+          alert(res.response.data.Error.join("\n"));
+        });
     },
   },
 };

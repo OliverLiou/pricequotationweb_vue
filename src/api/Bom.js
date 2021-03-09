@@ -7,13 +7,27 @@ const GetBoms = {
     }
 }
 
-const GetBomDetail = {
+const GetBomItems = {
     r: (query) => {
-        return instance.get(`${preUrlPath}/GetBomDetail/${query}`)
+        return instance.get(`${preUrlPath}/GetBomItems/${query}`)
+    }
+}
+
+const CreateBom = {
+    r: (query,params) => {
+        return instance.post(`${preUrlPath}/CreateBom/${query}`,params)
+    }
+}
+
+const UpdateBomItem = {
+    r: (query,params) => {
+        return instance.put(`${preUrlPath}/UpdateBomItem/${query}`,params)
     }
 }
 
 export {
     GetBoms,
-    GetBomDetail
+    GetBomItems,
+    CreateBom,
+    UpdateBomItem
 }
