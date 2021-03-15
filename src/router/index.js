@@ -2,17 +2,17 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 
-import Home from '../src/pages/index'
-import BomDetails from '../src/pages/BomDetails'
+import Oppos from '../pages/Oppos'
+import BomDetails from '../pages/BomDetails'
 
 Vue.use(VueRouter)
 
 export default new VueRouter({
     routes: [
         {
-            path: '/index',
+            path: '/',
             name: 'home',
-            component: Home
+            component: Oppos
         },
         {
             path: '/GetBomDetail/:assemblyPartNumber',
