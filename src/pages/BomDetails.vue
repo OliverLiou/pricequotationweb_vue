@@ -30,10 +30,11 @@
         border
         stripe
         resizable
-        height="600"
+        height="450"
         :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
         :sync-resize="selectTab"
         :loading="dataReading"
+        show-header
       >
       </vxe-grid>
     </div>
@@ -51,7 +52,7 @@
         border
         stripe
         resizable
-        height="700"
+        height="450"
         :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
         :sync-resize="selectTab"
       >
@@ -71,7 +72,7 @@
         border
         stripe
         resizable
-        height="700"
+        height="450"
         :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
         :sync-resize="selectTab"
       >
@@ -546,7 +547,38 @@ export default {
         },
         {
           title: "操作",
-          slots: {},
+          slots: {
+            default: ({ row }) => {
+              if (this.$refs.xGrid.isActiveByRow(row)) {
+                return [
+                  <vxe-button
+                    status="success"
+                    content="儲存"
+                    onClick={() => {
+                      this.BomItemUpdate(row);
+                    }}
+                  />,
+                  <vxe-button
+                    status="danger"
+                    content="取消"
+                    onClick={() => {
+                      this.cancelRowEvent(row);
+                    }}
+                  />,
+                ];
+              } else {
+                return [
+                  <vxe-button
+                    status="primary"
+                    content="編輯"
+                    onClick={() => {
+                      this.editRowEvent(row);
+                    }}
+                  />,
+                ];
+              }
+            },
+          }
         },
       ],
       fixtureDetailData: null,

@@ -38,12 +38,10 @@
       <vxe-modal
         v-model="modalParms.show"
         :title="modalParms.title"
-        width="85%"
+        width="95%"
         height="80%"
-        :mask = true
-        :esc-closable="true"
+        :esc-closable= true
         destroy-on-close
-        resize
       >
         <BomDetail
           :id="modalParms.assemblyPartNumber"

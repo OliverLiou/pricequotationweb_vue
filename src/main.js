@@ -22,7 +22,7 @@ import { iconsSet as icons } from './assets/icons/icons.js'
 import store from './store'
 
 VXETable.setup({
-  zIndex: 30000 // 全局 zIndex 起始值，如果项目的的 z-index 样式值过大时就需要跟随设置更大，避免被遮挡
+  zIndex: 1100 // 全局 zIndex 起始值，如果项目的的 z-index 样式值过大时就需要跟随设置更大，避免被遮挡
 })
 
 

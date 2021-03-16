@@ -28,7 +28,7 @@ function configRoutes() {
             children: [
                 {
                     path: 'oppos',
-                    name: '/pages/Oppos',
+                    name: 'Oppos',
                     component: Oppos
                 }
             ]
