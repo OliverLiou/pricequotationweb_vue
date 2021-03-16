@@ -7,18 +7,14 @@
   >
     <template #toggler>
       <CHeaderNavLink>
-        <div class="c-avatar">
-          <img
-            src="img/avatars/6.jpg"
-            class="c-avatar-img "
-          />
-        </div>
+        <CIcon name="cilUser"/>
+          <strong>Account</strong>
       </CHeaderNavLink>
     </template>
-    <CDropdownHeader tag="div" class="text-center" color="light">
+    <!-- <CDropdownHeader tag="div" class="text-center" color="light">
       <strong>Account</strong>
-    </CDropdownHeader>
-    <CDropdownItem>
+    </CDropdownHeader> -->
+    <!-- <CDropdownItem>
       <CIcon name="cil-bell"/> Updates
       <CBadge color="info" class="mfs-auto">{{ itemsCount }}</CBadge>
     </CDropdownItem>
@@ -58,7 +54,7 @@
     <CDropdownDivider/>
     <CDropdownItem>
       <CIcon name="cil-shield-alt" /> Lock Account
-    </CDropdownItem>
+    </CDropdownItem> -->
     <CDropdownItem>
       <CIcon name="cil-lock-locked" /> Logout
     </CDropdownItem>

@@ -35,21 +35,21 @@
       </vxe-grid>
     </div>
 
-    <template>
       <vxe-modal
         v-model="modalParms.show"
         :title="modalParms.title"
-        width="100%"
-        height="95%"
+        width="85%"
+        height="80%"
+        :mask = true
         :esc-closable="true"
         destroy-on-close
+        resize
       >
         <BomDetail
           :id="modalParms.assemblyPartNumber"
           :show="modalParms.show"
         />
       </vxe-modal>
-    </template>
   </div>
 </template>
 

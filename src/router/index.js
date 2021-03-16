@@ -1,24 +1,37 @@
 /* eslint-disable no-unused-vars */
 import Vue from 'vue';
-import VueRouter from 'vue-router';
+import Router from 'vue-router';
 
-import Oppos from '../pages/Oppos'
-import BomDetails from '../pages/BomDetails'
+Vue.use(Router)
 
-Vue.use(VueRouter)
+// Containers
+const TheContainer = () => import('@/containers/TheContainer')
 
-export default new VueRouter({
-    routes: [
+const Oppos = () => import('@/pages/Oppos')
+// const BomDetails = () => import('@/pages/BomDetails')
+
+
+export default new Router({
+    mode: 'hash', // https://router.vuejs.org/api/#mode
+    linkActiveClass: 'active',
+    scrollBehavior: () => ({ y: 0 }),
+    routes: configRoutes()
+})
+
+function configRoutes() {
+    return [
         {
             path: '/',
-            name: 'home',
-            component: Oppos
-        },
-        {
-            path: '/GetBomDetail/:assemblyPartNumber',
-            name: 'GetBomDetail',
-            component: BomDetails
+            redirect: '',
+            name: 'Home',
+            component: TheContainer,
+            children: [
+                {
+                    path: 'oppos',
+                    name: '/pages/Oppos',
+                    component: Oppos
+                }
+            ]
         }
-
     ]
-})
+}

@@ -1,7 +1,6 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
-  <div class="app">
-    <br />
+  <div >
     <p>
       <vxe-radio-group v-model="selectTab">
         <vxe-radio-button
@@ -31,7 +30,7 @@
         border
         stripe
         resizable
-        height="700"
+        height="600"
         :edit-config="{ trigger: 'manual', mode: 'row', showStatus: true }"
         :sync-resize="selectTab"
         :loading="dataReading"
