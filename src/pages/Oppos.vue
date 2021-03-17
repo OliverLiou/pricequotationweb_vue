@@ -1,23 +1,43 @@
 <!-- eslint-disable vue/no-unused-vars -->
 <template>
   <div field="app">
+    <vxe-form :data="UploadOppo">
+      <vxe-form-item title="立項單號：" field="number">
+        <template #default>
+          <vxe-input
+            v-model="UploadOppo.number"
+            size="medium"
+            class="my-domain"
+            maxlength="6"
+            placeholder="請輸入立項單號"
+          >
+            <template #prefix>
+              <span>OPPO-</span>
+            </template>
+          </vxe-input>
+        </template>
+      </vxe-form-item>
+      <vxe-form-item title="選擇檔案：" field="files">
+        <template #default>
+          <b-form-file
+            ref="file-input"
+            multiple
+            accept=".xlsx"
+            v-model="UploadOppo.files"
+          />
+        </template>
+      </vxe-form-item>
+      <vxe-form-item #default>
+        <vxe-button
+          type="submit"
+          status="primary"
+          content="上傳"
+          @click="CreateOppo"
+        />
+      </vxe-form-item>
+    </vxe-form>
+
     <br />
-    <b-container>
-      <b-form-group>
-        <vxe-input v-model="oppoNumber" placeholder="請輸入OPPO號碼" />
-        <b-form-group>
-          <div>
-            <b-form-file
-              ref="file-input"
-              multiple
-              accept=".xlsx"
-              v-model="files"
-            />
-            <b-button variant="info" @click="CreateOppo">上傳</b-button>
-          </div>
-        </b-form-group>
-      </b-form-group>
-    </b-container>
 
     <div>
       <vxe-grid
@@ -35,19 +55,16 @@
       </vxe-grid>
     </div>
 
-      <vxe-modal
-        v-model="modalParms.show"
-        :title="modalParms.title"
-        width="95%"
-        height="80%"
-        :esc-closable= true
-        destroy-on-close
-      >
-        <BomDetail
-          :id="modalParms.assemblyPartNumber"
-          :show="modalParms.show"
-        />
-      </vxe-modal>
+    <vxe-modal
+      v-model="modalParms.show"
+      :title="modalParms.title"
+      width="95%"
+      height="80%"
+      :esc-closable="true"
+      destroy-on-close
+    >
+      <BomDetail :id="modalParms.assemblyPartNumber" :show="modalParms.show" />
+    </vxe-modal>
   </div>
 </template>
 
@@ -62,8 +79,10 @@ export default {
   name: "App",
   data() {
     return {
-      oppoNumber: "",
-      files: null,
+      UploadOppo: {
+        number: "",
+        files: null,
+      },
       Oppos: [],
       tableColumns: [
         {
@@ -179,24 +198,25 @@ export default {
         });
     },
     async CreateOppo() {
-      this.oppoNumber = this.oppoNumber.toUpperCase();
-      if (this.oppoNumber == "") {
+      const oppoNumber = 'OPPO-' + this.UploadOppo.number;
+      const files = this.UploadOppo.files;
+      if (oppoNumber.length <= 5) {
         alert("請輸入OPPO編號！");
         return;
       }
-      if (this.files == null) {
+      if (files === null) {
         alert("請選擇檔案後再上傳！");
         return;
       }
       let formData = new FormData();
-      this.files.forEach(function (params) {
+      files.forEach(function (params) {
         formData.append("file", params);
       });
-      this.$OppoApi.CreateOppo.r(this.oppoNumber, formData)
+      this.$OppoApi.CreateOppo.r(oppoNumber, formData)
         .then(() => {
           this.GetOppos();
-          this.oppoNumber = "";
-          this.files = [];
+          this.UploadOppo.number = "";
+          this.UploadOppo.files = [];
           alert("上傳成功！");
         })
         .catch((res) => {
@@ -231,3 +251,22 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.my-domain.vxe-input {
+  height: 34px;
+  width: 300px;
+}
+.my-domain.vxe-input >>> .vxe-input--prefix {
+  width: 60px;
+  height: 32px;
+  top: 1px;
+  text-align: center;
+  border-right: 1px solid #dcdfe6;
+  background-color: #f5f7fa;
+}
+.my-domain.vxe-input >>> .vxe-input--inner {
+  padding-left: 72px;
+  border: 1px solid #dcdfe6;
+}
+</style>

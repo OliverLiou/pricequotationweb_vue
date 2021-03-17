@@ -20,11 +20,16 @@ import 'core-js/stable'
 import CoreuiVue from '@coreui/vue'
 import { iconsSet as icons } from './assets/icons/icons.js'
 import store from './store'
+import { library, dom } from '@fortawesome/fontawesome-svg-core'
+import { fas } from '@fortawesome/free-solid-svg-icons'
 
 VXETable.setup({
   zIndex: 1100 // 全局 zIndex 起始值，如果项目的的 z-index 样式值过大时就需要跟随设置更大，避免被遮挡
 })
 
+// fontawesome全域註冊
+library.add(fas)
+dom.watch()
 
 Vue.config.performance = true
 Vue.use(CoreuiVue)
