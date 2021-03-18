@@ -1,5 +1,4 @@
 /* eslint-disable no-unused-vars */
-
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router/index'
@@ -11,11 +10,9 @@ import axios from "axios";
 import moment from "vue-moment";
 import * as BomApi from "./api/Bom";
 import * as OppoApi from "./api/Oppo";
-import 'xe-utils'
+import XEUtils from 'xe-utils'
 import VXETable from 'vxe-table'
 import 'vxe-table/lib/style.css'
-// import vxeModal from 'vxe-table/packages/modal'
-
 import 'core-js/stable'
 import CoreuiVue from '@coreui/vue'
 import { iconsSet as icons } from './assets/icons/icons.js'
@@ -44,13 +41,15 @@ Vue.use(moment);
 Vue.config.productionTip = false
 Vue.use(BomApi);
 Vue.use(VXETable)
+Vue.use(XEUtils)
 
 Vue.prototype.$Moment = moment
 Vue.prototype.$BomApi = BomApi
 Vue.prototype.$OppoApi = OppoApi
 Vue.prototype.$vxeModal = VXETable.modal
 Vue.prototype.$axios = axios
-
+Vue.prototype.$XReadFile = VXETable.readFile
+Vue.prototype.$xEUtils = XEUtils
 
 new Vue({
   el: '#app',

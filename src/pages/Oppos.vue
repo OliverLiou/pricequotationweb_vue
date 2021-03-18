@@ -17,28 +17,11 @@
           </vxe-input>
         </template>
       </vxe-form-item>
-      <vxe-form-item title="選擇檔案：" field="files">
-        <template #default>
-          <b-form-file
-            ref="file-input"
-            multiple
-            accept=".xlsx"
-            v-model="UploadOppo.files"
-          />
-        </template>
-      </vxe-form-item>
-      <vxe-form-item #default>
-        <vxe-button
-          type="submit"
-          status="primary"
-          content="上傳"
-          @click="CreateOppo"
-        />
+      <vxe-form-item>
+        <vxe-button status="primary" content="瀏覽檔案" @click="CreateOppo()" />
       </vxe-form-item>
     </vxe-form>
-
     <br />
-
     <div>
       <vxe-grid
         ref="xTable"
@@ -48,6 +31,7 @@
         resizable
         show-overflow
         show-header-overflow
+        :loading="tableLoading"
         :data="Oppos"
         :columns="tableColumns"
         :tree-config="{ key: 'oPPOId', children: 'boms' }"
@@ -70,9 +54,7 @@
 
 <script>
 /* eslint-disable no-unused-vars */
-// import BomDetail from '../pages/BomDetails';
 import BomDetail from "..//pages/BomDetails";
-import XEUtils from "xe-utils";
 
 export default {
   components: { BomDetail },
@@ -81,7 +63,6 @@ export default {
     return {
       UploadOppo: {
         number: "",
-        files: null,
       },
       Oppos: [],
       tableColumns: [
@@ -182,6 +163,7 @@ export default {
         assemblyPartNumber: null,
         title: null,
       },
+      tableLoading: null,
     };
   },
   async mounted() {
@@ -189,38 +171,51 @@ export default {
   },
   methods: {
     async GetOppos() {
+      this.tableLoading = true;
       await this.$OppoApi.GetOppos.r()
         .then((res) => {
           this.Oppos = res.data;
+          this.tableLoading = false;
         })
         .catch((res) => {
-          alert(res.response.data.Error.join("\n"));
+          this.$vxeModal.alert(res.response.data.Error.join("\n"));
         });
     },
     async CreateOppo() {
-      const oppoNumber = 'OPPO-' + this.UploadOppo.number;
-      const files = this.UploadOppo.files;
+      const oppoNumber = "OPPO-" + this.UploadOppo.number;
       if (oppoNumber.length <= 5) {
-        alert("請輸入OPPO編號！");
+        this.$vxeModal.alert("請輸入OPPO編號！");
         return;
       }
+      const { files } = await this.$XReadFile({
+        multiple: true,
+        types: ["xlsx"],
+      });
+
       if (files === null) {
-        alert("請選擇檔案後再上傳！");
+        this.$vxeModal.alert("請選擇檔案後再上傳！");
         return;
       }
       let formData = new FormData();
+      let fileNames = "";
       files.forEach(function (params) {
+        fileNames += params.name + ' ';
         formData.append("file", params);
       });
-      this.$OppoApi.CreateOppo.r(oppoNumber, formData)
-        .then(() => {
-          this.GetOppos();
-          this.UploadOppo.number = "";
-          this.UploadOppo.files = [];
-          alert("上傳成功！");
-        })
-        .catch((res) => {
-          alert(res.response.data.Error.join("\n"));
+      this.$vxeModal.confirm("確定要將" + fileNames + "以上檔案上傳？")
+        .then((type) => {
+          if (type === "confirm") {
+            this.$OppoApi.CreateOppo.r(oppoNumber, formData)
+              .then(() => {
+                this.GetOppos();
+                this.UploadOppo.number = "";
+                this.UploadOppo.files = [];
+                this.$vxeModal.alert("上傳成功！");
+              })
+              .catch((res) => {
+                this.$vxeModal.alert(res.response.data.Error.join("\n"));
+              });
+          }
         });
     },
     ControlModal(rowData) {
@@ -229,22 +224,22 @@ export default {
       this.modalParms.assemblyPartNumber = rowData.assemblyPartNumber;
     },
     formatterDate({ cellValue }) {
-      return XEUtils.toDateString(cellValue, "yyyy-MM-dd");
+      return this.$xEUtils.toDateString(cellValue, "yyyy-MM-dd");
     },
     async UpLoadBom(oppoId) {
       if (oppoId == null) {
-        alert("oppoId不得為空！");
+        this.$vxeModal.alert("oppoId不得為空！");
       }
       this.$refs.xTable.readFile().then((excelFile) => {
         const formData = new FormData();
         formData.append("file", excelFile.file);
         this.$BomApi.CreateBom.r(oppoId, formData)
           .then(() => {
-            alert("上傳成功！");
+            this.$vxeModal.alert("上傳成功！");
             this.GetOppos();
           })
           .catch((res) => {
-            alert(res.response.data.Error.join("\n"));
+            this.$vxeModal.alert(res.response.data.Error.join("\n"));
           });
       });
     },
@@ -268,5 +263,8 @@ export default {
 .my-domain.vxe-input >>> .vxe-input--inner {
   padding-left: 72px;
   border: 1px solid #dcdfe6;
+}
+.my-vxeContent {
+  width: 600px;
 }
 </style>
