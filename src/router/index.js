@@ -8,7 +8,7 @@ Vue.use(Router)
 const TheContainer = () => import('@/containers/TheContainer')
 
 const Oppos = () => import('@/pages/Oppos')
-// const BomDetails = () => import('@/pages/BomDetails')
+const LogIn = () => import('@/pages/Login')
 
 
 export default new Router({
@@ -32,6 +32,13 @@ function configRoutes() {
                     component: Oppos
                 }
             ]
+        },
+        {
+            path: '/LogIn',
+            redirect: '',
+            name: 'LogIn',
+            component: LogIn,
         }
+
     ]
 }

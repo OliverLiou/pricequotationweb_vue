@@ -6,7 +6,7 @@
     @update:show="(value) => $store.commit('set', ['sidebarShow', value])"
   >
     <CSidebarBrand class="d-md-down-none" to="/">
-      <CIcon 
+      <!-- <CIcon 
         class="c-sidebar-brand-full" 
         name="logo" 
         size="custom-size" 
@@ -19,7 +19,11 @@
         size="custom-size" 
         :height="35" 
         viewBox="0 0 110 134"
-      />
+      /> -->
+      <CIcon :content="$options.systemIcon"
+        size="custom-size" 
+        :height="35" />
+      
     </CSidebarBrand>
 
     <CRenderFunction flat :content-to-render="$options.nav"/>
@@ -32,10 +36,12 @@
 
 <script>
 import nav from './_nav'
+import { cilScreenDesktop } from '@coreui/icons'
 
 export default {
   name: 'TheSidebar',
   nav,
+  systemIcon: cilScreenDesktop,
   computed: {
     show () {
       return this.$store.state.sidebarShow 
